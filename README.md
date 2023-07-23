@@ -1,70 +1,285 @@
-# Getting Started with Create React App
+# Simple React.js Todo List Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![image](https://github.com/smitesht/react-simple-todo-list/assets/52151346/bb26f61c-6e21-4415-90a0-8d91443cb306)
 
-## Available Scripts
+# React Feature Used
+- useState
+- React Routing
+- CSS Flex
+- HTML input text, button
 
-In the project directory, you can run:
 
-### `npm start`
+# File structure
+![image](https://github.com/smitesht/react-simple-todo-list/assets/52151346/1635b35a-9e54-4cac-ad1d-6a8e97dff8c1)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+![image](https://github.com/smitesht/react-simple-todo-list/assets/52151346/4fca8bff-236f-40cb-8400-8e578bb375ce)
 
-### `npm test`
+# Code Snippet
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Create Routing
+```
+function App() {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <HomeLayout />,
+      children: [
+        {
+          index: true,
+          element: <TodoList />,
+        },
+      ],
+    },
+  ]);
 
-### `npm run build`
+  return <RouterProvider router={router} />;
+}
+```
+### HomeLayout
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+const HomeLayout = () => {
+  return (
+    <div>
+      <Navbar />
+      <main className="main-container">
+        <Outlet />
+      </main>
+    </div>
+  );
+};
+```
+### Navbar
+```
+const Navbar = () => {
+  return (
+    <div className="navbar-wrapper">
+      <Link to="/" className="brand">
+        Todo List
+      </Link>
+    </div>
+  );
+};
+```
+### TodoList
+```
+let todoItemList = [];
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+const TodoList = () => {
+  const [todolist, setTodoList] = useState(todoItemList);
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  const OnAddTask = (task) => {
+    const todoTask = { id: todolist.length + 1, task, isComplete: false };
+    setTodoList((prevData) => [...prevData, todoTask]);
+  };
 
-### `npm run eject`
+  const OnCompleteTask = (id) => {
+    const newList = todolist.map((todo) => {
+      return todo.id === id ? { ...todo, isComplete: !todo.isComplete } : todo;
+    });
+    setTodoList(newList);
+  };
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  const OnDeleteTask = (id) => {
+    const newList = todolist.filter((todo) => {
+      return todo.id !== id;
+    });
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    setTodoList(newList);
+  };
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+  const OnEditTask = (id) => {
+    const newList = todolist.map((todo) => {
+      return todo.id === id ? { ...todo, isEdit: !todo.isEdit } : todo;
+    });
+    setTodoList(newList);
+  };
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+  const OnSaveTask = (newtask) => {
+    const newList = todolist.map((todo) => {
+      return todo.id === newtask.id
+        ? { ...todo, task: newtask.task, isEdit: false }
+        : todo;
+    });
 
-## Learn More
+    setTodoList(newList);
+  };
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  return (
+    <div className="todo-list-wrapper">
+      <TodoListHeader>Todo List</TodoListHeader>
+      <TodoTaskForm addTask={OnAddTask} />
+      <TodoTaskListWrapper
+        todolist={todolist}
+        onCompleteTask={OnCompleteTask}
+        onDeleteTask={OnDeleteTask}
+        onEditTask={OnEditTask}
+        onSaveTask={OnSaveTask}
+      />
+    </div>
+  );
+};
+```
+### TodoTaskListWrapper
+```
+const TodoTaskListWrapper = ({
+  todolist,
+  onCompleteTask,
+  onDeleteTask,
+  onEditTask,
+  onSaveTask,
+}) => {
+  const OnCompleteTask = (id) => {
+    onCompleteTask(id);
+  };
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  const OnDeleteTask = (id) => {
+    onDeleteTask(id);
+  };
 
-### Code Splitting
+  const OnEditTask = (id) => {
+    onEditTask(id);
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+  const OnSaveTask = (task) => {
+    console.log(task);
+    onSaveTask(task);
+  };
 
-### Analyzing the Bundle Size
+  return (
+    <div className="wrapper box-shadow mx-1 flex-col">
+      {todolist.length ? (
+        todolist.map((todoItem) => {
+          return todoItem.isEdit ? (
+            <TodoEditForm
+              key={todoItem.id}
+              todoitem={todoItem}
+              saveTask={OnSaveTask}
+            />
+          ) : (
+            <TodoTask
+              key={todoItem.id}
+              task={todoItem}
+              completeTask={OnCompleteTask}
+              deleteTask={OnDeleteTask}
+              editTask={OnEditTask}
+            />
+          );
+        })
+      ) : (
+        <h3>No Todo Items</h3>
+      )}
+    </div>
+  );
+};
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### TodoTaskForm
+```
+const TodoTaskForm = ({ addTask }) => {
+  const [task, setTask] = useState("");
 
-### Making a Progressive Web App
+  const OnChangeTaskValue = (e) => {
+    setTask((data) => (data = e.target.value));
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+  const OnTaskSubmit = (e) => {
+    e.preventDefault();
 
-### Advanced Configuration
+    if (task.trim().length != 0) {
+      addTask(task);
+      setTask("");
+    }
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+  return (
+    <form className="wrapper box-shadow flex-row">
+      <input
+        className="input-text"
+        placeholder="Enter New Task"
+        name="task"
+        value={task}
+        onChange={(e) => OnChangeTaskValue(e)}
+      />
+      <button className="btn cta" onClick={OnTaskSubmit}>
+        ADD
+      </button>
+    </form>
+  );
+};
+```
+### TodoTask
 
-### Deployment
+```
+const TodoTask = ({ task, completeTask, deleteTask, editTask }) => {
+  const OnCompleteTask = (id) => {
+    completeTask(task.id);
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+  const OnDeleteTask = (id) => {
+    deleteTask(task.id);
+  };
 
-### `npm run build` fails to minify
+  const OnEditTask = (id) => {
+    editTask(task.id);
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  return (
+    <div className="todo-task-wrapper">
+      <span
+        className={`item-span ${task.isComplete ? "task-complete" : ""}`}
+        onClick={OnCompleteTask}
+      >
+        {task.task}
+      </span>
+      <div className="flex-row">
+        <button className="btn cta" onClick={OnEditTask}>
+          <FaEdit />
+        </button>
+        <button className="btn cta-danger" onClick={OnDeleteTask}>
+          <FaTrash />
+        </button>
+      </div>
+    </div>
+  );
+};
+```
+
+### TodoEditForm
+```
+const TodoEditForm = ({ todoitem, saveTask }) => {
+  const [task, setTask] = useState(todoitem.task);
+
+  const OnChangeTaskValue = (e) => {
+    setTask((data) => (data = e.target.value));
+  };
+
+  const OnTaskSubmit = (e) => {
+    e.preventDefault();
+
+    if (task.trim().length != 0) {
+      //addTask(task);
+      const newTask = { ...todoitem, isEdit: false, task: task };
+      console.log(newTask);
+      saveTask(newTask);
+      setTask("");
+    }
+  };
+
+  return (
+    <form className="wrapper box-shadow flex-row">
+      <input
+        className="input-text"
+        placeholder="Enter New Task"
+        name="task"
+        value={task}
+        onChange={(e) => OnChangeTaskValue(e)}
+      />
+      <button className="btn cta" onClick={OnTaskSubmit}>
+        SAVE
+      </button>
+    </form>
+  );
+};
+```
