@@ -1,0 +1,87 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-color: #edf6f9;
+  --seconday-color: #006d77;
+  --least-color: #83c5be;
+  --cta-color: #e29578;
+  --input-bg-color: #f2f2f2;
+  --blue: #2196f3;
+  --white: #fff;
+  --black: #000;
+  --navbar-height: 3rem;
+  --dancing-font: "Dancing Script", cursive;
+  --open-sans-font: "Open Sans", sans-serif;
+}
+
+body {
+  background-color: var(--primary-color);
+}
+
+.btn {
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cta {
+  background-color: var(--seconday-color);
+  color: var(--primary-color);
+}
+
+.cta-danger {
+  background-color: var(--cta-color);
+  color: var(--white);
+}
+
+.cta-blue {
+  background-color: var(--blue);
+  color: var(--white);
+}
+
+.invert {
+  background-color: var(--primary-color);
+  color: var(--seconday-color);
+}
+
+.my-1 {
+  margin: 0 1rem;
+}
+
+.mx-1 {
+  margin: 1rem 0;
+}
+
+.main-container {
+  width: 100%;
+  min-height: calc(100vh - var(--navbar-height));
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--white);
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.box-shadow {
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
